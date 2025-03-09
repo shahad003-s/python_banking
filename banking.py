@@ -42,13 +42,19 @@ class Data:
 
 class Bank:
     def __init__(self, name):
+        bank_csv = open("bank.csv", "r")
+        last_account = bank_csv.readlines()[-1]
+        last_account = last_account.split(',')
+        last_account_id = int(last_account[0])
         self.name=name
         self.fieldnames = ["account_id", "first_name", "last_name","password","balance_checking","balance_savings"]
-        self.account_counter = 10006
-    
+        #find the current highest account number in the csv
+        last_account_id += 1
+        self.account_id = str(last_account_id)
+
     def add_customer(self, customer):
         try:
-           with open("bank.csv", "a+") as csvfile:
+           with open("bank.csv", "a+",newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
             writer.writerow(customer)
         except csv.Error as e:
@@ -56,8 +62,6 @@ class Bank:
                print(e)
 
     def create_account(self):
-      self.account_id = str(self.account_counter)
-      self.account_counter += 1 
       first_name = input("Enter first name: ")
       last_name = input("Enter last name: ")
       password = input("Enter password: ")
@@ -96,11 +100,19 @@ class Bank:
         'balance_checking': balance_checking,
         'balance_savings': balance_savings
         }
-      self.add_customer(new_customer)
+      self.add_customer(customer=new_customer)
       print(f"Account created successfully! Account ID: {self.account_id}")
 
 
  
 bank = Bank("Golden Dune Bank")
+
 bank.create_account()
 
+
+
+
+
+
+
+    

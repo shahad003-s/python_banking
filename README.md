@@ -1,6 +1,6 @@
 # Golden Dune Bank - Python Banking System
 
-![Golden Dune Bank](/project/python_banking/Golden%20Dune%20Bank%20(3).png)
+![Golden Dune Bank](./Golden%20Dune%20Bank%20(3).png)
 
 
 

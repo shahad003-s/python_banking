@@ -3,10 +3,6 @@
 ![Golden Dune Bank](./Golden%20Dune%20Bank%20(3).png)
 
 
-
-
-
-
 ## Project Description
 
 Welcome to the Golden Dune Bank Python Banking System! This project simulates a banking environment where customers can have checking and savings accounts, withdraw and deposit money, transfer funds, and more. The system also implements overdraft protection and ensures that customers can only access their own information. It uses Python classes, file handling, and the CSV module to manage data.

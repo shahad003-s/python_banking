@@ -56,7 +56,6 @@ class Bank:
             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
             writer.writerow(customer)
         except csv.Error as e:
-   
                print(e)
 
     def create_account(self):
@@ -69,8 +68,8 @@ class Bank:
          print("1. Checking account")
          print("2. Savings account")
          print("3. Both checking and savings accounts")
-         balance_checking = 0
-         balance_savings = 0
+         balance_checking = None
+         balance_savings = None
          balance= True
          while balance :
           account_type = int(input("Enter the option number: "))
@@ -102,6 +101,8 @@ class Bank:
          print("have nice day")
 
 class Customer_Login_Logout :
+    def __init__(self):
+      self.logged_in_customer = None
  
     def login(self):
         idNumber = input ("Enter your Account ID: ")
@@ -114,24 +115,70 @@ class Customer_Login_Logout :
                         print(f"Welcome, {customer['first_name']}! You are now logged in.\n")
                         print("Account details:\n")
                         print(f"{customer['account_id']}, {customer['first_name']}, {customer['last_name']}, {customer['balance_checking']}, {customer['balance_savings']}")
+                        self.logged_in_customer = customer
                         return customer
             else:
              print("Invalid credentials. Please try again.")
 
     def logout(self):
-       logout_account = input(" Do you want logout ? y for yes n for no\n").lower()
-       if logout_account =="y":
-          print("have nice day")
-#        else:
-#           print("No user logged in.")
+         if self.logged_in_customer:
+            logout_account = input("Do you want to logout? y for yes n for no\n").lower()
+            if logout_account == "y":
+                print("You have logged out. Have a nice day!")
+                self.logged_in_customer = None
+            else:
+                print("You are still logged in.")
+         else:
+           print("No user logged in.")
           
-# class Withdraw :
-#    def __init__(self, customer):
-#       self.customer=customer
+class Withdraw :
+   def __init__(self, login_instance):
+        self.login_instance = login_instance
    
-#    def withdraw_money (self) :
-#       print(self.customer)
+   def withdraw_money (self) :
+       if not self.login_instance.logged_in_customer:
+            print("You need to log in first.")
+            return
+        
+       customer = self.login_instance.logged_in_customer
+       print("Select the type of account to withdraw from:")
+       print("1. Checking account")
+       print("2. Savings account")
+       
+       account_type = int(input("Enter the option number: "))
+       if account_type == 1:
+         if customer["balance_checking"] is not None and customer["balance_checking"] != '':
+               checking_balance = float(customer["balance_checking"])
+               if checking_balance > 0:
+                  withdrawal_amount = float(input("Enter the amount to withdraw: $"))
+                  if withdrawal_amount > 100:
+                     print("You cannot withdraw more than $100 in one transaction.")
+                     return
+                  
+                  if checking_balance >= withdrawal_amount:
+                     customer["balance_checking"] = checking_balance - withdrawal_amount
+                     print(f"Withdrawal successful. New checking balance: ${customer['balance_checking']}")
+          
+         else:
+            print("Insufficient balance in checking account.")
 
+       elif account_type == 2:
+         if customer["balance_savings"] is not None and customer["balance_savings"] != '':
+                savings_balance = float(customer["balance_savings"])
+                if savings_balance > 0:
+                   withdrawal_amount = float(input("Enter the amount to withdraw: $"))
+                   if withdrawal_amount > 100:
+                      print("You cannot withdraw more than $100 in one transaction.")
+                      return
+                   if savings_balance >= withdrawal_amount:
+                        customer["balance_savings"] = savings_balance - withdrawal_amount
+                        print(f"Withdrawal successful. New savings balance: ${customer['balance_savings']}")
+         else:
+            print("Insufficient balance in savings account.")
+         
+      
+     
+      
     
 class Deposit :
    pass
@@ -140,17 +187,13 @@ class Transfer :
    pass
 
 
-
-
-
-
 bank = Bank("Golden Dune Bank")
 bank.create_account()
 log=Customer_Login_Logout()
 log.login()
-log.logout()
-# withdraw = Withdraw(customer)
-# withdraw.withdraw_money()
+# log.logout()
+withdraw = Withdraw(log)
+withdraw.withdraw_money()
 
 
 

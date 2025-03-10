@@ -4,8 +4,5 @@ account_id,first_name,last_name,password,balance_checking,balance_savings
 10003,melvin,gordon,uYWE732g4ga1,2000,20000
 10004,stacey,abrams,DEU8_qw3y72$,2000,20000
 10005,jake,paul,d^dg23g)@,100000,100000
-10006,shahad,as,123%,123456.0,78901.0,3
-10007,shahad,as,123456,0,123456789.0,2
-10008,shahad,as,123,0,1212.0
-10009,as,as,12,1231234.0,1324324.0
-10010,sha,q,123,12.0,12.0
+10006,a,a,1,300.0,
+10007,q,q,2,,400.0

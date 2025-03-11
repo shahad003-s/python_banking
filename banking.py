@@ -134,6 +134,8 @@ class Customer_Login_Logout :
 class Withdraw :
    def __init__(self, login_instance):
         self.login_instance = login_instance
+        self.overdraft_count = {}
+
    
    def withdraw_money (self) :
        if not self.login_instance.logged_in_customer:
@@ -141,23 +143,27 @@ class Withdraw :
             return
         
        customer = self.login_instance.logged_in_customer
+       account_id = customer["account_id"]
+       
+       if account_id not in self.overdraft_count:
+        self.overdraft_count[account_id] = 0 
+
        print("Select the type of account to withdraw from:")
        print("1. Checking account")
        print("2. Savings account")
+      
+
        
        account_type = int(input("Enter the option number: "))
        if account_type == 1:
          if customer["balance_checking"] is not None and customer["balance_checking"] != '':
                checking_balance = float(customer["balance_checking"])
-               if checking_balance > 0:
-                  withdrawal_amount = float(input("Enter the amount to withdraw: $"))
-                  if withdrawal_amount > 100:
-                     print("You cannot withdraw more than $100 in one transaction.")
-                     return
-                  
-                  if checking_balance >= withdrawal_amount:
-                     customer["balance_checking"] = checking_balance - withdrawal_amount
-                     print(f"Withdrawal successful. New checking balance: ${customer['balance_checking']}")
+               withdrawal_amount = float(input("Enter the amount to withdraw: $"))
+               
+               if checking_balance >= withdrawal_amount:
+                  customer["balance_checking"] = checking_balance - withdrawal_amount
+                  print(f"Withdrawal successful. New checking balance: ${customer['balance_checking']}")
+
           
          else:
             print("Insufficient balance in checking account.")
@@ -165,35 +171,40 @@ class Withdraw :
        elif account_type == 2:
          if customer["balance_savings"] is not None and customer["balance_savings"] != '':
                 savings_balance = float(customer["balance_savings"])
-                if savings_balance > 0:
-                   withdrawal_amount = float(input("Enter the amount to withdraw: $"))
-                   if withdrawal_amount > 100:
-                      print("You cannot withdraw more than $100 in one transaction.")
-                      return
-                   if savings_balance >= withdrawal_amount:
-                        customer["balance_savings"] = savings_balance - withdrawal_amount
-                        print(f"Withdrawal successful. New savings balance: ${customer['balance_savings']}")
+                withdrawal_amount = float(input("Enter the amount to withdraw: $"))
+
+                if savings_balance >= withdrawal_amount:
+                    customer["balance_savings"] = savings_balance - withdrawal_amount
+                    print(f"Withdrawal successful. New savings balance: ${customer['balance_savings']}")
          else:
             print("Insufficient balance in savings account.")
          
       
-     
-      
-    
 class Deposit :
-   pass
+     def __init__(self, login_instance):
+        self.login_instance = login_instance
+        
+
+    
  	
-class Transfer : 
-   pass
+
+ 	
 
 
-bank = Bank("Golden Dune Bank")
-bank.create_account()
+
+
+
+
+
+# bank = Bank("Golden Dune Bank")
+# bank.create_account()
 log=Customer_Login_Logout()
 log.login()
 # log.logout()
 withdraw = Withdraw(log)
 withdraw.withdraw_money()
+
+
 
 
 

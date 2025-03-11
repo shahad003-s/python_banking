@@ -180,12 +180,38 @@ class Withdraw :
             print("Insufficient balance in savings account.")
          
       
+     
+      
+    
 class Deposit :
      def __init__(self, login_instance):
         self.login_instance = login_instance
         
 
-    
+     def deposit_money (self) :
+       if not self.login_instance.logged_in_customer:
+            print("You need to log in first.")
+            return
+       customer = self.login_instance.logged_in_customer
+
+       print("Select the type of account to deposit to:")
+       print("1. Checking account")
+       print("2. Savings account")
+
+       account_type = int(input("Enter the option number: "))
+
+       if account_type == 1:
+         if customer["balance_checking"] is not None and customer["balance_checking"] != '':
+               checking_balance = float(customer["balance_checking"])
+               deposit_amount = float(input("Enter the amount to withdraw: $"))
+               customer["balance_checking"] = checking_balance + deposit_amount
+               print(f"Withdrawal successful. New checking balance: ${customer['balance_checking']}")
+       if account_type == 2:
+         if customer["balance_savings"] is not None and customer["balance_savings"] != '':
+               checking_balance = float(customer["balance_savings"])
+               deposit_amount = float(input("Enter the amount to  deposit: $"))
+               customer["balance_savings"] = checking_balance + deposit_amount
+               print(f" deposit successful. New checking balance: ${customer['balance_savings']}")
  	
 
  	
@@ -194,6 +220,8 @@ class Deposit :
 
 
 
+class Transfer : 
+   pass
 
 
 # bank = Bank("Golden Dune Bank")
@@ -201,10 +229,11 @@ class Deposit :
 log=Customer_Login_Logout()
 log.login()
 # log.logout()
-withdraw = Withdraw(log)
-withdraw.withdraw_money()
+# withdraw = Withdraw(log)
+# withdraw.withdraw_money()
 
-
+deposit=Deposit(log)
+deposit.deposit_money()
 
 
 

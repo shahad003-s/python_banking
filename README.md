@@ -14,6 +14,7 @@ The goal of this project is to showcase how to build a simple, but functional ba
 ## Technologies Used
 - **Python 3.x**  
 - **CSV module** (for reading and writing account data)
+
 ---
 
 ## App Functionality / User Stories

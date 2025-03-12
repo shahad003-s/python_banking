@@ -168,7 +168,7 @@ class Withdraw:
                         customer["balance_checking"] = (checking_balance - withdrawal_amount)
                         print(f"Withdrawal successful. New checking balance: ${customer['balance_checking']}" )
                         self.update_csv(customer)
-                    else:
+                    if withdrawal_amount > checking_balance :
                         customer["balance_checking"] = (checking_balance - withdrawal_amount)
                         customer["balance_checking"] -= 35
                         overdraft_count += 1
@@ -177,7 +177,6 @@ class Withdraw:
                             customer["status"] = "deactivated"
                             print("Your account has been deactivated due to excessive overdrafts.")
                         customer["overdraft_count"] = overdraft_count 
-                        
 
                         self.update_csv(customer)
                 else:

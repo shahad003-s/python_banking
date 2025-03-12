@@ -105,9 +105,9 @@ class Customer_Login:
             reader = csv.DictReader(bank_csv)
             for customer in reader:
                 if ( customer["account_id"] == idNumber and customer["first_name"] == username and customer["password"] == password):
-                    print(f"Welcome, {customer['first_name']}! You are now logged in.\n")
+                    print(f"\nWelcome, {customer['first_name']}! You are now logged in.\n")
                     print("Account details:\n")
-                    print( f"{customer['account_id']}, {customer['first_name']}, {customer['last_name']}, {customer['balance_checking']}, {customer['balance_savings']}")
+                    print(f"{customer['account_id']}, {customer['first_name']}, {customer['last_name']}, {customer['balance_checking']}, {customer['balance_savings']},{customer['status']},{customer['overdraft_count']}")
                     self.logged_in_customer = customer
                     self.choose_operation()
                     return customer
@@ -140,7 +140,6 @@ class Customer_Login:
             else:
                 print("Invalid option. Please try again.")
 
-
 class Withdraw:
     def __init__(self, login_instance):
         self.login_instance = login_instance
@@ -154,6 +153,7 @@ class Withdraw:
             return
 
         overdraft_count = int(customer.get("overdraft_count", 0))
+        overdraft_limit = -100
 
         print("Select the type of account to withdraw from:")
         print("1. Checking account")
@@ -164,6 +164,9 @@ class Withdraw:
                 checking_balance = float(customer["balance_checking"])
                 withdrawal_amount = float(input("Enter the amount to withdraw: $"))
                 if withdrawal_amount <= 100:
+                    if checking_balance - withdrawal_amount < overdraft_limit:
+                        print("Withdrawal denied! Your account cannot go below -$100.")
+                        return
                     if checking_balance > 0:
                         customer["balance_checking"] = (checking_balance - withdrawal_amount)
                         print(f"Withdrawal successful. New checking balance: ${customer['balance_checking']}" )
@@ -188,15 +191,20 @@ class Withdraw:
                 savings_balance = float(customer["balance_savings"])
                 withdrawal_amount = float(input("Enter the amount to withdraw: $"))
                 if withdrawal_amount <= 100:
+                    if savings_balance - withdrawal_amount < overdraft_limit:
+                        print("Withdrawal denied! Your account cannot go below -$100.")
+                        return
                     if savings_balance > 0:
                         customer["balance_savings"] = savings_balance - withdrawal_amount
                         print(f"Withdrawal successful. New savings balance: ${customer['balance_savings']}")
                         self.update_csv(customer)
-                    else:
+                    if withdrawal_amount > savings_balance:
                         customer["balance_savings"] = (savings_balance - withdrawal_amount)
                         customer["balance_savings"] -= 35
                         overdraft_count += 1
-                        print(f"Withdrawal successful. New savings balance: ${customer['balance_savings']}")
+                        print(
+                            f"Withdrawal successful. cost for overdraft is \"35\"  New savings balance: ${customer['balance_savings']}"
+                        )
                         if overdraft_count >= 2:
                             customer["status"] = "deactivated"
                             print("Your account has been deactivated due to excessive overdrafts.")
@@ -228,7 +236,6 @@ class Withdraw:
             for customer in updated_customers:
                 writer.writerow(customer)
 
-
 class Deposit:
     def __init__(self, login_instance):
         self.login_instance = login_instance
@@ -258,9 +265,9 @@ class Deposit:
 
         elif account_type == 2:
             if customer["balance_savings"] is not None and customer["balance_savings"] != "":
-                checking_balance = float(customer["balance_savings"])
+                savings_balance = float(customer["balance_savings"])
                 deposit_amount = float(input("Enter the amount to  deposit: $"))
-                customer["balance_savings"] = checking_balance + deposit_amount
+                customer["balance_savings"] = savings_balance + deposit_amount
                 print(f" deposit successful. New checking balance: ${customer['balance_savings']}")
                 if ( customer["status"] == "deactivated" and customer["balance_checking"] >= 0):
                     customer["overdraft_count"] = 0
@@ -290,7 +297,6 @@ class Deposit:
             writer.writeheader()
             for customer in updated_customers:
                 writer.writerow(customer)
-
 
 class Transfer :
     def __init__(self, login_instance):
@@ -338,42 +344,71 @@ class Transfer :
                     customer["balance_checking"] = checking_balance + transfer_amount
                     print(f"Transfer successful! New balances:\nSavings: ${customer['balance_savings']}\nChecking: ${customer['balance_checking']}")
                     self.update_csv(customer)
-
             else :
                 print("you have onle one account balance ")
+
         if transfer_type == 2:
             print("Select the type of account to transfer from:")
             print("1. Checking account")
             print("2. Savings account")
             account_type = int(input("Enter the option number: "))
             if account_type == 1:
-                checking_balance = float(customer["balance_checking"])
-                print(f"Your checking account balance: ${customer['balance_checking']}")
-                transfer_amount = float(input("Enter the amount to transfer:"))
-                if transfer_amount > checking_balance:
-                    print("Insufficient funds in your checking account.")
-                    return
-                recipient_account_id = input("Enter the recipient's account ID: ")
-                recipient_found = False
-                with open("bank.csv", "r") as csvfile:
-                    reader = csv.DictReader(csvfile)
-                    for recipient in reader:
-                        if recipient["account_id"] == recipient_account_id:
-                            recipient_found = True
-                            recipient_balance = float(recipient["balance_checking"])
-                            recipient["balance_checking"] = recipient_balance + transfer_amount
-                            print(f"Transfer successful! New balance for recipient's checking account: ${recipient['balance_checking']}")
-                            self.update_csv(recipient)
-                            break
-                if not recipient_found:
-                    print("Recipient account not found.")
-                    return
-            customer["balance_checking"] = checking_balance - transfer_amount
-            print(
-                f"Your new balance for checking account: ${customer['balance_checking']}"
-            )
-            self.update_csv(customer)
+                if customer["balance_checking"] is not None and customer["balance_checking"] != "":
+                    checking_balance = float(customer["balance_checking"])
+                    print(f"Your checking account balance: ${customer['balance_checking']}")
+                    transfer_amount = float(input("Enter the amount to transfer:"))
+                    if transfer_amount > checking_balance:
+                        print("Insufficient funds in your checking account.")
+                        return
+                    recipient_account_id = input("Enter the recipient's account ID: ")
+                    recipient_found = False
+                    with open("bank.csv", "r") as csvfile:
+                        reader = csv.DictReader(csvfile)
+                        for recipient in reader:
+                            if recipient["account_id"] == recipient_account_id:
+                                recipient_found = True
+                                recipient_balance = float(recipient["balance_checking"])
+                                recipient["balance_checking"] = recipient_balance + transfer_amount
+                                print(f"Transfer successful! New balance for recipient's checking account: ${recipient['balance_checking']}")
+                                self.update_csv(recipient)
+                                break
+                    if not recipient_found:
+                        print("Recipient account not found.")
+                        return
+                    customer["balance_checking"] = checking_balance - transfer_amount
+                    print(f"Your new balance for checking account: ${customer['balance_checking']}")
+                    self.update_csv(customer)
+                else:
+                    print("you don't have a checking account.")
 
+            elif account_type == 2:
+                if customer["balance_savings"] is not None and customer["balance_savings"] != "":
+                    savings_balance = float(customer["balance_savings"])
+                    print(f"Your savings account balance: ${customer['balance_savings']}")
+                    transfer_amount = float(input("Enter the amount to transfer:"))
+                    if transfer_amount > savings_balance:
+                        print("Insufficient funds in your checking account.")
+                        return
+                    recipient_account_id = input("Enter the recipient's account ID: ")
+                    recipient_found = False
+                    with open("bank.csv", "r") as csvfile:
+                        reader = csv.DictReader(csvfile)
+                        for recipient in reader:
+                            if recipient["account_id"] == recipient_account_id:
+                                recipient_found = True
+                                recipient_balance = float(recipient["balance_savings"])
+                                recipient["balance_savings"] = (recipient_balance + transfer_amount)
+                                print(f"Transfer successful! New balance for recipient's checking account: ${recipient['balance_savings']}")
+                                self.update_csv(recipient)
+                                break
+                    if not recipient_found:
+                        print("Recipient account not found.")
+                        return
+                    customer["balance_savings"] = savings_balance - transfer_amount
+                    print(f"Your new balance for savings account: ${customer['balance_savings']}")
+                    self.update_csv(customer)
+                else: 
+                    print("you don't have a savings account.")
     def update_csv(self, updated_customer):
         updated_customers = []
         with open("bank.csv", "r") as csvfile:
@@ -391,3 +426,5 @@ class Transfer :
 
 bank = Bank("Golden Dune Bank")
 bank.account()
+
+# bonus

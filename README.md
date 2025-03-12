@@ -18,7 +18,7 @@ The goal of this project is to showcase how to build a simple, but functional ba
 
 ---
 
-## App Functionality / User Stories
+## App Functionality / User Stories 🏦
 | Feature                          | Description |
 |-----------------------------------|-------------|
 | **Add New Customer**              | Add a new customer with checking and/or savings account |
@@ -35,7 +35,7 @@ The goal of this project is to showcase how to build a simple, but functional ba
 
 ---
 
-## Challenges / Key Takeaways
+## Challenges / Key Takeaways ⚠️
 - Printing the Last Line of a File Read in with CSV in Python 
   - By using Python’s csv module, you can read the file into a list of lines using the readlines() method. 
   - After reading the file, the last line can be accessed using negative indexing (lines[-1]). 
@@ -49,7 +49,7 @@ The goal of this project is to showcase how to build a simple, but functional ba
   - The main difficulty was updating a specific column in the CSV file without altering other data. Since CSV files don’t support direct modifications like databases, I had to read all the data, modify only the necessary field (such as balance), and then rewrite the entire file while preserving its structure.
 
 ---
-### IceBox Features
+### IceBox Features 🧊
 - Index all transactions for a customer account.
 
 - If a customer has only a savings account and does not have a checking account, they can open a checking account to have both types of accounts.
@@ -58,15 +58,8 @@ The goal of this project is to showcase how to build a simple, but functional ba
 
 
 ---
-### To Run the Project:
 
-1. `bank.csv`: Contains account information. It is used to persist data.
-2. `banking.py`: Contains all the Python code for handling user interactions. It also manages account creation and overdraft protection.
-
-
----
-
-### Code is student's own code / site's sources accordingly :
+### Refernces :
 - Print Last Line of File Read In with Python 
 (https://stackoverflow.com/questions/37227909/print-last-line-of-file-read-in-with-python)
 `f1 = open(inputFile, "r")
@@ -75,4 +68,6 @@ f1.close()`
 
 
 ---
-**Enjoy coding and happy banking! 💸**
+** 💃 💃money money! 💸 🏆 **
+
+![gif](https://media.giphy.com/media/ADgfsbHcS62Jy/giphy.gif)

@@ -4,6 +4,7 @@ account_id,first_name,last_name,password,balance_checking,balance_savings,status
 10003,melvin,gordon,uYWE732g4ga1,2000,20000,,
 10004,stacey,abrams,DEU8_qw3y72$,2000,20000,,
 10005,jake,paul,d^dg23g)@,100000,100000,,
-10006,a,a,1,397.0,,active,0
-10007,q,q,2,110.0,200.0,active,0
+10006,a,a,1,135.0,,active,0
+10007,q,q,2,300.0,312.0,active,0
 10008,w,w,3,,200.0,active,0
+10009,z,z,1,-55.0,123.0,active,1

@@ -72,14 +72,7 @@ The goal of this project is to showcase how to build a simple, but functional ba
 `f1 = open(inputFile, "r")
 last_line = f1.readlines()[-1]
 f1.close()`
--  class  withdraw 
-(https://www.geeksforgeeks.org/python-program-to-create-bankaccount-class-with-deposit-withdraw-function/)
-`def withdraw(self):
-        amount = float(input("Enter amount to be withdrawn: "))
-        if self.balance >= amount:
-            self.balance -= amount
-            print("\n You Withdrew:", amount)
-        else:
-            print("\n Insufficient balance  ")`
+
+
 ---
 **Enjoy coding and happy banking! 💸**

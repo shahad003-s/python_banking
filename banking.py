@@ -46,7 +46,7 @@ class Bank:
     def account(self):
         account = input(" Do you have  an account? Y for yes N for no\n").lower()
         if account == "y":
-            log = Customer_Login_Logout()
+            log = Customer_Login()
             log.login()
         elif account == "n":
             self.create_account()
@@ -94,7 +94,7 @@ class Bank:
         print(f"Account created successfully! Account ID: {self.account_id}")
 
 
-class Customer_Login_Logout:
+class Customer_Login:
     def __init__(self):
         self.logged_in_customer = None
 
@@ -132,8 +132,9 @@ class Customer_Login_Logout:
             elif operation == "2":
                 deposit = Deposit(self)
                 deposit.deposit_money()
-            # elif operation == "3":
-            #     transfer = Transfer()
+            elif operation == "3":
+                transfer = Transfer(self)
+                transfer.transfer_money()
             elif operation == "4":
                 print("You have logged out. Have a nice day!")
                 choose = False
@@ -164,7 +165,7 @@ class Withdraw:
         print("2. Savings account")
         account_type = int(input("Enter the option number: "))
         if account_type == 1:
-            if (customer["balance_checking"] is not None and customer["balance_checking"] != "" ):
+            if customer["balance_checking"] is not None and customer["balance_checking"] != "" :
                 checking_balance = float(customer["balance_checking"])
                 withdrawal_amount = float(input("Enter the amount to withdraw: $"))
                 if withdrawal_amount <= 100:
@@ -191,7 +192,7 @@ class Withdraw:
                 print("Insufficient balance in checking account.")
 
         elif account_type == 2:
-            if (customer["balance_savings"] is not None and customer["balance_savings"] != ""):
+            if customer["balance_savings"] is not None and customer["balance_savings"] != "":
                 savings_balance = float(customer["balance_savings"])
                 withdrawal_amount = float(input("Enter the amount to withdraw: $"))
                 if withdrawal_amount <= 100:
@@ -207,7 +208,7 @@ class Withdraw:
                         if overdraft_count >= 2:
                             customer["status"] = "deactivated"
                             print("Your account has been deactivated due to excessive overdrafts.")
-                        customer["overdraft_count"] = overdraft_count
+                        customer["overdraft_count"] = overdraft_count       
                         self.update_csv(customer)
                 else:
                     print("You cannot withdraw more than $100 in one transaction.")
@@ -252,7 +253,7 @@ class Deposit:
         account_type = int(input("Enter the option number: "))
 
         if account_type == 1:
-            if (customer["balance_checking"] is not None and customer["balance_checking"] != ""):
+            if customer["balance_checking"] is not None and customer["balance_checking"] != "":
                 checking_balance = float(customer["balance_checking"])
                 deposit_amount = float(input("Enter the amount to deposit : $"))
                 customer["balance_checking"] = checking_balance + deposit_amount
@@ -266,7 +267,7 @@ class Deposit:
                 print("Insufficient balance in checking account.")
 
         elif account_type == 2:
-            if (customer["balance_savings"] is not None and customer["balance_savings"] != ""):
+            if customer["balance_savings"] is not None and customer["balance_savings"] != "":
                 checking_balance = float(customer["balance_savings"])
                 deposit_amount = float(input("Enter the amount to  deposit: $"))
                 customer["balance_savings"] = checking_balance + deposit_amount
@@ -292,7 +293,6 @@ class Deposit:
                     customer["balance_savings"] = updated_customer["balance_savings"]
                     customer["status"] = updated_customer["status"]
                     customer["overdraft_count"] = updated_customer["overdraft_count"]
-
                 updated_customers.append(customer)
 
         with open("bank.csv", "w", newline="") as csvfile:
@@ -302,10 +302,54 @@ class Deposit:
                 writer.writerow(customer)
 
 
-# class Transfer :
-#    pass
+class Transfer :
+    def __init__(self, login_instance):
+        self.login_instance = login_instance
 
-# dddddddddd
+    def transfer_money(self):
+        if not self.login_instance.logged_in_customer:
+            print("You need to log in first.")
+            return
+
+        customer = self.login_instance.logged_in_customer
+        if customer.get("status", "active") == "deactivated":
+            print("Your account is deactivated. Please add funds to reactivate.")
+            return
+
+        if customer["balance_checking"] is not None and customer["balance_checking"] != "" and customer["balance_savings"] is not None and customer["balance_savings"] != "":
+            print("Select the type of account to transfer from:")
+            print("1. Checking account")
+            print("2. Savings account")
+            account_type = int(input("Enter the option number: "))
+            if account_type == 1:
+                checking_balance = float(customer["balance_checking"])
+                savings_balance = float(customer["balance_savings"])
+                print(f"Checking: ${customer['balance_checking']}\nSavings: ${customer['balance_savings']}")
+                transfer_amount = int(input("Enter the amount to transfer:"))
+                if transfer_amount > checking_balance:
+                    print("Insufficient funds in checking account.")
+                    return
+                customer["balance_checking"] = checking_balance - transfer_amount
+                customer["balance_savings"] = savings_balance + transfer_amount
+                print(f"Transfer successful! New balances:\nChecking: ${customer['balance_checking']}\nSavings: ${customer['balance_savings']}")
+
+            if account_type == 2:
+                savings_balance = float(customer["balance_savings"])
+                checking_balance = float(customer["balance_checking"])
+                print(f"Savings: ${customer['balance_savings']}\nChecking: ${customer['balance_checking']}")
+
+                transfer_amount = int(input("Enter the amount to transfer:"))
+                if transfer_amount > savings_balance:
+                    print("Insufficient funds in Savings account.")
+                    return
+                customer["balance_savings"] = savings_balance - transfer_amount
+                customer["balance_checking"] = checking_balance + transfer_amount
+                print(f"Transfer successful! New balances:\nSavings: ${customer['balance_savings']}\nChecking: ${customer['balance_checking']}")
+
+        else :
+            print("you have onle one account balance ")
+
+        
 
 bank = Bank("Golden Dune Bank")
 bank.account()

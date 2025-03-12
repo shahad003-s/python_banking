@@ -1,21 +1,17 @@
 import csv
 import os
 
-# 1.0 Import the csv and os packages:
-# 1.1 Seed Data to CSV
-
-
 class Data:
 
     bank_info = [
-        {"account_id": "10001","first_name": "suresh","last_name": "sigera","password": "juagw362","balance_checking": 1000,"balance_savings": 10000},
-        {"account_id": "10002","first_name": "james","last_name": "taylor","password": "idh36%@#FGd","balance_checking": 10000,"balance_savings": 10000},
-        {"account_id": "10003","first_name": "melvin","last_name": "gordon","password": "uYWE732g4ga1","balance_checking": 2000,"balance_savings": 20000},
-        {"account_id": "10004","first_name": "stacey","last_name": "abrams","password": "DEU8_qw3y72$","balance_checking": 2000,"balance_savings": 20000},
-        {"account_id": "10005","first_name": "jake","last_name": "paul","password": "d^dg23g)@","balance_checking": 100000,"balance_savings": 100000 },
+        {"account_id": "10001","first_name": "suresh","last_name": "sigera","password": "juagw362","balance_checking": 1000,"balance_savings": 10000 ,"status": "active","overdraft_count": 0},
+        {"account_id": "10002","first_name": "james","last_name": "taylor","password": "idh36%@#FGd","balance_checking": 10000,"balance_savings": 10000,"status": "active","overdraft_count": 0},
+        {"account_id": "10003","first_name": "melvin","last_name": "gordon","password": "uYWE732g4ga1","balance_checking": 2000,"balance_savings": 20000,"status": "active","overdraft_count": 0},
+        {"account_id": "10004","first_name": "stacey","last_name": "abrams","password": "DEU8_qw3y72$","balance_checking": 2000,"balance_savings": 20000,"status": "active","overdraft_count": 0},
+        {"account_id": "10005","first_name": "jake","last_name": "paul","password": "d^dg23g)@","balance_checking": 100000,"balance_savings": 100000 ,"status": "active","overdraft_count": 0 },
     ]
   
-    fieldnames = ["account_id","first_name","last_name","password","balance_checking","balance_savings" ]
+    fieldnames = ["account_id","first_name","last_name","password","balance_checking","balance_savings","status" ,"overdraft_count"]
    
     if not os.path.exists("./bank.csv"):
         with open("./bank.csv", "w", newline="") as csvfile:
@@ -35,7 +31,7 @@ class Bank:
         last_account = last_account.split(",")
         last_account_id = int(last_account[0])
         self.name = name
-        self.fieldnames = ["account_id","first_name","last_name","password","balance_checking","balance_savings" ]
+        self.fieldnames = ["account_id","first_name","last_name","password","balance_checking","balance_savings","status","overdraft_count"]
         last_account_id += 1
         self.account_id = str(last_account_id)
 
@@ -91,6 +87,8 @@ class Bank:
             "password": password,
             "balance_checking": balance_checking,
             "balance_savings": balance_savings,
+            "status": "active",
+            "overdraft_count": 0
         }
         self.add_customer(new_customer)
         print(f"Account created successfully! Account ID: {self.account_id}")
@@ -100,9 +98,6 @@ class Customer_Login_Logout:
     def __init__(self):
         self.logged_in_customer = None
 
-    def __str__(self):
-        return f"account_id: {self.account_id}, first_name: {self.first_name}, last_name: {self.last_name}, password: {self.password}, balance_checking: {self.balance_checking}, balance_savings: {self.balance_savings}"
-
     def login(self):
         idNumber = input("Enter your Account ID: ").lower()
         username = input("Enter your first name: ").lower()
@@ -111,18 +106,10 @@ class Customer_Login_Logout:
         with open("bank.csv", "r") as bank_csv:
             reader = csv.DictReader(bank_csv)
             for customer in reader:
-                if (
-                    customer["account_id"] == idNumber
-                    and customer["first_name"] == username
-                    and customer["password"] == password
-                ):
-                    print(
-                        f"Welcome, {customer['first_name']}! You are now logged in.\n"
-                    )
+                if ( customer["account_id"] == idNumber and customer["first_name"] == username and customer["password"] == password):
+                    print(f"Welcome, {customer['first_name']}! You are now logged in.\n")
                     print("Account details:\n")
-                    print(
-                        f"{customer['account_id']}, {customer['first_name']}, {customer['last_name']}, {customer['balance_checking']}, {customer['balance_savings']}"
-                    )
+                    print( f"{customer['account_id']}, {customer['first_name']}, {customer['last_name']}, {customer['balance_checking']}, {customer['balance_savings']}")
                     self.logged_in_customer = customer
                     self.choose_operation()
                     return customer
@@ -166,6 +153,12 @@ class Withdraw:
 
         customer = self.login_instance.logged_in_customer
 
+        if customer.get("status", "active") == "deactivated":
+            print("Your account is deactivated. Please add funds to reactivate.")
+            return
+
+        overdraft_count = int(customer.get("overdraft_count", 0))
+
         print("Select the type of account to withdraw from:")
         print("1. Checking account")
         print("2. Savings account")
@@ -182,8 +175,14 @@ class Withdraw:
                     else:
                         customer["balance_checking"] = (checking_balance - withdrawal_amount)
                         customer["balance_checking"] -= 35
-                        print(f"Withdrawal successful.and cost for overdraft is \"35\"  New checking balance: ${customer['balance_checking']}"
-)
+                        overdraft_count += 1
+                        print(f"Withdrawal successful.and cost for overdraft is \"35\"  New checking balance: ${customer['balance_checking']}")
+                        if overdraft_count >= 2:
+                            customer["status"] = "deactivated"
+                            print("Your account has been deactivated due to excessive overdrafts.")
+                        customer["overdraft_count"] = overdraft_count 
+                        
+
                         self.update_csv(customer)
                 else:
                     print("You cannot withdraw more than $100 in one transaction.")
@@ -203,7 +202,12 @@ class Withdraw:
                     else:
                         customer["balance_savings"] = (savings_balance - withdrawal_amount)
                         customer["balance_savings"] -= 35
+                        overdraft_count += 1
                         print(f"Withdrawal successful. New savings balance: ${customer['balance_savings']}")
+                        if overdraft_count >= 2:
+                            customer["status"] = "deactivated"
+                            print("Your account has been deactivated due to excessive overdrafts.")
+                        customer["overdraft_count"] = overdraft_count
                         self.update_csv(customer)
                 else:
                     print("You cannot withdraw more than $100 in one transaction.")
@@ -221,6 +225,8 @@ class Withdraw:
                 if customer["account_id"] == updated_customer["account_id"]:
                     customer["balance_checking"] = updated_customer["balance_checking"]
                     customer["balance_savings"] = updated_customer["balance_savings"]
+                    customer["status"] = updated_customer.get("status", "active")
+                    customer["overdraft_count"] = updated_customer.get("overdraft_count", 0)
                 updated_customers.append(customer)
 
         with open("bank.csv", "w", newline="") as csvfile:
@@ -251,6 +257,10 @@ class Deposit:
                 deposit_amount = float(input("Enter the amount to deposit : $"))
                 customer["balance_checking"] = checking_balance + deposit_amount
                 print(f"deposit successful. New checking balance: ${customer['balance_checking']}")
+                if (customer["status"] == "deactivated" and customer["balance_checking"] >= 0):
+                    customer["overdraft_count"] = 0
+                    customer["status"] = "active"
+                    print("Your account has been reactivated.")
                 self.update_csv(customer)
             else:
                 print("Insufficient balance in checking account.")
@@ -261,6 +271,10 @@ class Deposit:
                 deposit_amount = float(input("Enter the amount to  deposit: $"))
                 customer["balance_savings"] = checking_balance + deposit_amount
                 print(f" deposit successful. New checking balance: ${customer['balance_savings']}")
+                if ( customer["status"] == "deactivated" and customer["balance_checking"] >= 0):
+                    customer["overdraft_count"] = 0
+                    customer["status"] = "active"
+                    print("Your account has been reactivated.")
                 self.update_csv(customer)
             else:
                 print("Insufficient balance in savings account.")
@@ -276,6 +290,9 @@ class Deposit:
                 if customer["account_id"] == updated_customer["account_id"]:
                     customer["balance_checking"] = updated_customer["balance_checking"]
                     customer["balance_savings"] = updated_customer["balance_savings"]
+                    customer["status"] = updated_customer["status"]
+                    customer["overdraft_count"] = updated_customer["overdraft_count"]
+
                 updated_customers.append(customer)
 
         with open("bank.csv", "w", newline="") as csvfile:
@@ -288,6 +305,7 @@ class Deposit:
 # class Transfer :
 #    pass
 
+# dddddddddd
 
 bank = Bank("Golden Dune Bank")
 bank.account()

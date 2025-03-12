@@ -332,6 +332,7 @@ class Transfer :
                 customer["balance_checking"] = checking_balance - transfer_amount
                 customer["balance_savings"] = savings_balance + transfer_amount
                 print(f"Transfer successful! New balances:\nChecking: ${customer['balance_checking']}\nSavings: ${customer['balance_savings']}")
+                self.update_csv(customer)
 
             if account_type == 2:
                 savings_balance = float(customer["balance_savings"])
@@ -345,11 +346,26 @@ class Transfer :
                 customer["balance_savings"] = savings_balance - transfer_amount
                 customer["balance_checking"] = checking_balance + transfer_amount
                 print(f"Transfer successful! New balances:\nSavings: ${customer['balance_savings']}\nChecking: ${customer['balance_checking']}")
+                self.update_csv(customer)
 
         else :
             print("you have onle one account balance ")
 
-        
+    def update_csv(self, updated_customer):
+        updated_customers = []
+        with open("bank.csv", "r") as csvfile:
+            info_customers = csv.DictReader(csvfile)
+            for customer in info_customers:
+                if customer["account_id"] == updated_customer["account_id"]:
+                    customer["balance_checking"] = updated_customer["balance_checking"]
+                    customer["balance_savings"] = updated_customer["balance_savings"]
+                updated_customers.append(customer)
+        with open("bank.csv", "w", newline="") as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=Data.fieldnames)
+            writer.writeheader()
+            for customer in updated_customers:
+                writer.writerow(customer)
+
 
 bank = Bank("Golden Dune Bank")
 bank.account()

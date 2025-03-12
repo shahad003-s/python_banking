@@ -43,14 +43,14 @@ class Bank:
             print(e)
 
     def account(self):
-        account = input(" Do you have  an account? Y for yes N for no\n").lower()
-        if account == "y":
+        account = input(" Do you have  an account? (yes/no)\n").lower()
+        if account == "yes":
             log = Customer_Login()
             log.login()
-        elif account == "n":
+        elif account == "no":
             self.create_account()
         else:
-            print("Invalid option. Enter y or n .")
+            print("Invalid option. Enter yes or no .")
 
     def create_account(self):
         first_name = input("Enter first name: ").lower()
@@ -177,12 +177,11 @@ class Withdraw:
                             customer["status"] = "deactivated"
                             print("Your account has been deactivated due to excessive overdrafts.")
                         customer["overdraft_count"] = overdraft_count 
-
                         self.update_csv(customer)
                 else:
                     print("You cannot withdraw more than $100 in one transaction.")
             else:
-                print("Insufficient balance in checking account.")
+                print("you don't have a checking account.")
 
         elif account_type == 2:
             if customer["balance_savings"] is not None and customer["balance_savings"] != "":
@@ -207,7 +206,7 @@ class Withdraw:
                     print("You cannot withdraw more than $100 in one transaction.")
 
             else:
-                print("Insufficient balance in savings account.")
+                print("you don't have a savings account.")
         else:
             print("Invalid option. Please try again.")
 
@@ -255,7 +254,7 @@ class Deposit:
                     print("Your account has been reactivated.")
                 self.update_csv(customer)
             else:
-                print("Insufficient balance in checking account.")
+                print("you don't have checking account.")
 
         elif account_type == 2:
             if customer["balance_savings"] is not None and customer["balance_savings"] != "":
@@ -269,7 +268,7 @@ class Deposit:
                     print("Your account has been reactivated.")
                 self.update_csv(customer)
             else:
-                print("Insufficient balance in savings account.")
+                print("you don't have a savings account.")
 
         else:
             print("Invalid option. Please try again.")

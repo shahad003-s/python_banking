@@ -12,8 +12,9 @@ The goal of this project is to showcase how to build a simple, but functional ba
 ---
 
 ## Technologies Used
-- **Python 3.x**  
-- **CSV module** (for reading and writing account data)
+- **Python** :A powerful and flexible programming language used to implement the project's.
+- **CSV module** :for reading and writing account data
+- **GitHub**: A version control and collaboration platform that helps manage code efficiently, track changes. 
 
 ---
 
@@ -35,7 +36,25 @@ The goal of this project is to showcase how to build a simple, but functional ba
 ---
 
 ## Challenges / Key Takeaways
-- No challenges yet! If any challenges arise during the development process, I will update this section accordingly. Stay tuned!
+- Printing the Last Line of a File Read in with CSV in Python 
+  - By using Python’s csv module, you can read the file into a list of lines using the readlines() method. 
+  - After reading the file, the last line can be accessed using negative indexing (lines[-1]). 
+
+  - Initially, I didn’t have a background on how to do this efficiently, but after some research, I learned how to handle it.
+
+- Challenges of Implementing Multiple Withdrawal Conditions
+  - condition must be checked in sequence, making sure that conditions (e.g., withdrawal limits, overdraft fees, account deactivation) are applied correctly without interfering with one another.
+- Updating Information in a CSV File
+
+  - The main difficulty was updating a specific column in the CSV file without altering other data. Since CSV files don’t support direct modifications like databases, I had to read all the data, modify only the necessary field (such as balance), and then rewrite the entire file while preserving its structure.
+
+---
+### IceBox Features
+- Index all transactions for a customer account.
+
+- If a customer has only a savings account and does not have a checking account, they can open a checking account to have both types of accounts.
+
+- Account suspension applies to a single account only, meaning if the overdraft limit is exceeded on a checking account, only that account is deactivated, while the savings account remains active (and vice versa).
 
 
 ---
@@ -43,14 +62,24 @@ The goal of this project is to showcase how to build a simple, but functional ba
 
 1. `bank.csv`: Contains account information. It is used to persist data.
 2. `banking.py`: Contains all the Python code for handling user interactions. It also manages account creation and overdraft protection.
-3. `bank_csv.py`: Used to create and populate the `bank.csv` file with some initial data if it's missing.
+
 
 ---
 
-### To Run the Project:
-
-1. If the `bank.csv` file doesn't already exist, run `bank_csv.py` to generate initial data.
-2. Run `banking.py` to start the banking application.
-3. Follow the prompts to interact with the system.
+### Code is student's own code / site's sources accordingly :
+- Print Last Line of File Read In with Python 
+(https://stackoverflow.com/questions/37227909/print-last-line-of-file-read-in-with-python)
+`f1 = open(inputFile, "r")
+last_line = f1.readlines()[-1]
+f1.close()`
+-  class  withdraw 
+(https://www.geeksforgeeks.org/python-program-to-create-bankaccount-class-with-deposit-withdraw-function/)
+`def withdraw(self):
+        amount = float(input("Enter amount to be withdrawn: "))
+        if self.balance >= amount:
+            self.balance -= amount
+            print("\n You Withdrew:", amount)
+        else:
+            print("\n Insufficient balance  ")`
 ---
 **Enjoy coding and happy banking! 💸**

@@ -269,7 +269,7 @@ class Deposit:
                 deposit_amount = float(input("Enter the amount to  deposit: $"))
                 customer["balance_savings"] = savings_balance + deposit_amount
                 print(f" deposit successful. New checking balance: ${customer['balance_savings']}")
-                if ( customer["status"] == "deactivated" and customer["balance_checking"] >= 0):
+                if ( customer["status"] == "deactivated" and customer["balance_savings"] >= 0):
                     customer["overdraft_count"] = 0
                     customer["status"] = "active"
                     print("Your account has been reactivated.")
@@ -396,9 +396,9 @@ class Transfer :
                         for recipient in reader:
                             if recipient["account_id"] == recipient_account_id:
                                 recipient_found = True
-                                recipient_balance = float(recipient["balance_savings"])
-                                recipient["balance_savings"] = (recipient_balance + transfer_amount)
-                                print(f"Transfer successful! New balance for recipient's checking account: ${recipient['balance_savings']}")
+                                recipient_balance = float(recipient["balance_checking"])
+                                recipient["balance_checking"] = (recipient_balance + transfer_amount)
+                                print(f"Transfer successful! New balance for recipient's checking account: ${recipient['balance_checking']}")
                                 self.update_csv(recipient)
                                 break
                     if not recipient_found:

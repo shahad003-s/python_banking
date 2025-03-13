@@ -3,7 +3,7 @@
 ![Golden Dune Bank](./Golden%20Dune%20Bank%20(3).png)
 
 
-## Project Description
+## Project Description 🏦
 
 Welcome to the Golden Dune Bank Python Banking System! This project simulates a banking environment where customers can have checking and savings accounts, withdraw and deposit money, transfer funds, and more. The system also implements overdraft protection and ensures that customers can only access their own information. It uses Python classes, file handling, and the CSV module to manage data.
 
@@ -11,7 +11,7 @@ The goal of this project is to showcase how to build a simple, but functional ba
 
 ---
 
-## Technologies Used
+## Technologies Used 💻 
 - **Python** :A powerful and flexible programming language used to implement the project's.
 - **CSV module** :for reading and writing account data
 - **GitHub**: A version control and collaboration platform that helps manage code efficiently, track changes. 

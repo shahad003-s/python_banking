@@ -1,0 +1,3 @@
+account_id,recipient_account_id,transfer_amount,balance_checking,balance_savings,transaction_time,transaction_type
+10007,10005,32.0,800.0,50.0,2025-03-13 14:42:32, From Checking account to Savings account
+10007,10014,10.0,800.0,40.0,2025-03-13 14:43:23, From Savings account to Checking account

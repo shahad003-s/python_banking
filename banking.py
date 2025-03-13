@@ -1,5 +1,6 @@
 import csv
 import os
+from datetime import datetime
 
 class Data:
 
@@ -301,6 +302,7 @@ class Deposit:
 class Transfer :
     def __init__(self, login_instance):
         self.login_instance = login_instance
+        self.fieldnames = ["account_id", "recipient_account_id", "transfer_amount", "balance_checking","balance_savings","transaction_time","transaction_type"] 
 
     def transfer_money(self):
         customer = self.login_instance.logged_in_customer
@@ -327,8 +329,7 @@ class Transfer :
                         return
                     customer["balance_checking"] = checking_balance - transfer_amount
                     customer["balance_savings"] = savings_balance + transfer_amount
-                    print(
-                        f"Transfer successful! New balances:\nChecking: ${customer['balance_checking']}\nSavings: ${customer['balance_savings']}")
+                    print(f"Transfer successful! New balances:\nChecking: ${customer['balance_checking']}\nSavings: ${customer['balance_savings']}")
                     self.update_csv(customer)
 
                 if account_type == 2:
@@ -378,6 +379,8 @@ class Transfer :
                     customer["balance_checking"] = checking_balance - transfer_amount
                     print(f"Your new balance for checking account: ${customer['balance_checking']}")
                     self.update_csv(customer)
+                    transaction_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    self.log_transaction(customer["account_id"], recipient_account_id, transfer_amount, customer["balance_checking"],customer["balance_savings"], transaction_time,transfer_type=" From Checking account to Savings account")
                 else:
                     print("you don't have a checking account.")
 
@@ -398,7 +401,9 @@ class Transfer :
                                 recipient_found = True
                                 recipient_balance = float(recipient["balance_checking"])
                                 recipient["balance_checking"] = (recipient_balance + transfer_amount)
-                                print(f"Transfer successful! New balance for recipient's checking account: ${recipient['balance_checking']}")
+                                print(
+                                    f"Transfer successful! New balance for recipient's savings account: ${recipient['balance_checking']}"
+                                )
                                 self.update_csv(recipient)
                                 break
                     if not recipient_found:
@@ -407,8 +412,12 @@ class Transfer :
                     customer["balance_savings"] = savings_balance - transfer_amount
                     print(f"Your new balance for savings account: ${customer['balance_savings']}")
                     self.update_csv(customer)
+                    transaction_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    self.log_transaction(customer["account_id"], recipient_account_id, transfer_amount, customer["balance_checking"],customer["balance_savings"], transaction_time,transfer_type=" From Savings account to Checking account")
+
                 else: 
                     print("you don't have a savings account.")
+
     def update_csv(self, updated_customer):
         updated_customers = []
         with open("bank.csv", "r") as csvfile:
@@ -424,7 +433,34 @@ class Transfer :
             for customer in updated_customers:
                 writer.writerow(customer)
 
+    def log_transaction(self, account_id, recipient_account_id, transfer_amount, balance_checking, balance_savings, transaction_time, transfer_type):
+     if not os.path.exists("./transactions.csv"):
+         with open("./transactions.csv", "w", newline="") as csvfile:
+             try:
+                 writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
+                 writer.writeheader()
+             except csv.Error as e:
+                 print(f"Error while creating the file: {e}")
+    
+     try:
+         with open("./transactions.csv", "a", newline="") as csvfile:
+             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
+             writer.writerow(
+                 {
+                     "account_id": account_id,
+                     "recipient_account_id": recipient_account_id,
+                     "transfer_amount": transfer_amount,
+                     "balance_checking": balance_checking,
+                     "balance_savings": balance_savings,
+                     "transaction_time": transaction_time,
+                     "transaction_type": transfer_type,
+                 }
+             )
+     except csv.Error as e:
+         print(f"Error while writing to the file: {e}")
+
 bank = Bank("Golden Dune Bank")
 bank.account()
 
-# bonus
+
+

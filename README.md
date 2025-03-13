@@ -18,7 +18,7 @@ The goal of this project is to showcase how to build a simple, but functional ba
 
 ---
 
-## App Functionality / User Stories 🏦
+## App Functionality  🏦
 | Feature                          | Description |
 |-----------------------------------|-------------|
 | **Add New Customer**              | Add a new customer with checking and/or savings account |
@@ -31,11 +31,11 @@ The goal of this project is to showcase how to build a simple, but functional ba
 | **Customer Login/Logout**         | Customers can login and logout, and access only their own information |
 | **Account Withdraw Restrictions** | Customers cannot withdraw more than $100 if account balance is negative |
 | **Account Withdraw Limits**       | Customers cannot withdraw more than $100 in a single transaction |
-
+| **Show historical data of transactions** | `Date:` The specific day when the transaction occurred.`Time:` The exact time of day when the transaction was processed.`Type:` it is From Savings account to Checking account or  From Checking account to Savings account .`Balance:` The account balance Checking and Savings. | 
 
 ---
 
-## Challenges / Key Takeaways ⚠️
+## Challenges ⚠️
 - Printing the Last Line of a File Read in with CSV in Python 
   - By using Python’s csv module, you can read the file into a list of lines using the readlines() method. 
   - After reading the file, the last line can be accessed using negative indexing (lines[-1]). 
@@ -65,6 +65,11 @@ The goal of this project is to showcase how to build a simple, but functional ba
 `f1 = open(inputFile, "r")
 last_line = f1.readlines()[-1]
 f1.close()`
+-how can disply datetime in python
+(https://docs.python.org/3/library/datetime.html)
+`from datetime import datetime`
+
+
 
 
 ---
